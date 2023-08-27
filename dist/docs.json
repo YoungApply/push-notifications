@@ -21,6 +21,21 @@
         "slug": "register"
       },
       {
+        "name": "unregister",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [
+          {
+            "name": "since",
+            "text": "5.0.0"
+          }
+        ],
+        "docs": "Unregister the app from push notifications.\n\nThis will delete a firebase token on Android, and unregister APNS on iOS.",
+        "complexTypes": [],
+        "slug": "unregister"
+      },
+      {
         "name": "getDeliveredNotifications",
         "signature": "() => Promise<DeliveredNotifications>",
         "parameters": [],
@@ -147,7 +162,7 @@
             "text": "1.0.0"
           }
         ],
-        "docs": "Check permission to receive push notifications.\n\nOn Android the status is always granted because you can always\nreceive push notifications. If you need to check if the user allows\nto display notifications, use local-notifications plugin.",
+        "docs": "Check permission to receive push notifications.\n\nOn Android 12 and below the status is always granted because you can always\nreceive push notifications. If you need to check if the user allows\nto display notifications, use local-notifications plugin.",
         "complexTypes": [
           "PermissionStatus"
         ],
@@ -164,7 +179,7 @@
             "text": "1.0.0"
           }
         ],
-        "docs": "Request permission to receive push notifications.\n\nOn Android it doesn't prompt for permission because you can always\nreceive push notifications.\n\nOn iOS, the first time you use the function, it will prompt the user\nfor push notification permission and return granted or denied based\non the user selection. On following calls it will get the current status of\nthe permission without prompting again.",
+        "docs": "Request permission to receive push notifications.\n\nOn Android 12 and below it doesn't prompt for permission because you can always\nreceive push notifications.\n\nOn iOS, the first time you use the function, it will prompt the user\nfor push notification permission and return granted or denied based\non the user selection. On following calls it will get the current status of\nthe permission without prompting again.",
         "complexTypes": [
           "PermissionStatus"
         ],
