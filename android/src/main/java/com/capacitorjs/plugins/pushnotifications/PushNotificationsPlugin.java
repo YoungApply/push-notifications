@@ -1,10 +1,12 @@
 package com.capacitorjs.plugins.pushnotifications;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import com.getcapacitor.annotation.PermissionCallback;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -22,8 +24,13 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@CapacitorPlugin(name = "PushNotifications", permissions = @Permission(strings = {}, alias = "receive"))
+@CapacitorPlugin(
+    name = "PushNotifications",
+    permissions = @Permission(strings = { Manifest.permission.POST_NOTIFICATIONS }, alias = PushNotificationsPlugin.PUSH_NOTIFICATIONS)
+)
 public class PushNotificationsPlugin extends Plugin {
+
+    static final String PUSH_NOTIFICATIONS = "receive";
 
     public static Bridge staticBridge = null;
     public static RemoteMessage lastMessage = null;
@@ -68,6 +75,30 @@ public class PushNotificationsPlugin extends Plugin {
             actionJson.put("actionId", "tap");
             actionJson.put("notification", notificationJson);
             notifyListeners("pushNotificationActionPerformed", actionJson, true);
+        }
+    }
+
+    @PluginMethod
+    public void checkPermissions(PluginCall call) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            JSObject permissionsResultJSON = new JSObject();
+            permissionsResultJSON.put("receive", "granted");
+            call.resolve(permissionsResultJSON);
+        } else {
+            super.checkPermissions(call);
+        }
+    }
+
+    @PluginMethod
+    public void requestPermissions(PluginCall call) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            JSObject permissionsResultJSON = new JSObject();
+            permissionsResultJSON.put("receive", "granted");
+            call.resolve(permissionsResultJSON);
+        } else {
+            if (getPermissionState(PUSH_NOTIFICATIONS) != PermissionState.GRANTED) {
+                requestPermissionForAlias(PUSH_NOTIFICATIONS, call, "permissionsCallback");
+            }
         }
     }
 
@@ -256,6 +287,11 @@ public class PushNotificationsPlugin extends Plugin {
         }
 
         notifyListeners("pushNotificationReceived", remoteMessageData, true);
+    }
+
+    @PermissionCallback
+    private void permissionsCallback(PluginCall call) {
+        this.checkPermissions(call);
     }
 
     public static PushNotificationsPlugin getPushNotificationsInstance() {
