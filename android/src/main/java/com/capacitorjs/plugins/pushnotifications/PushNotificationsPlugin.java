@@ -80,12 +80,12 @@ public class PushNotificationsPlugin extends Plugin {
 
     @PluginMethod
     public void checkPermissions(PluginCall call) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || getPermissionState(PUSH_NOTIFICATIONS) == PermissionState.GRANTED) {
             JSObject permissionsResultJSON = new JSObject();
             permissionsResultJSON.put("receive", "granted");
             call.resolve(permissionsResultJSON);
         } else {
-            super.checkPermissions(call);
+            requestPermissionForAlias(PUSH_NOTIFICATIONS, call, "permissionsCallback");
         }
     }
 
