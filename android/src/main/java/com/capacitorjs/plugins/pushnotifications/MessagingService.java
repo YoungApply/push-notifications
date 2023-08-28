@@ -47,9 +47,10 @@ public class MessagingService extends FirebaseMessagingService {
             String sender = remoteMessage.getData().get("sender");
             String message = remoteMessage.getData().get("message");
             String sender_id = remoteMessage.getData().get("sender_id");
+            String asset_id = remoteMessage.getData().get("asset_id");
             
 		Log.e("MyTagGoesHere", "about to go for a notification");
-            sendNotification(message, sender, sender_id);
+            sendNotification(message, sender, sender_id, asset_id);
         }
         /*
         else if (remoteMessage.getNotification() != null) {
@@ -86,15 +87,15 @@ public class MessagingService extends FirebaseMessagingService {
     } 
 
 
-    private void sendNotification(String messageBody, String sender, String sender_id) {
+    private void sendNotification(String messageBody, String sender, String sender_id, String asset_id) {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Notification existingNotification = getActiveNotification(Integer.parseInt(sender_id));
         MessagingStyle style;
-        IconCompat userIcon = getIconFromURL("https://api.youngapply.com/api/v1/user/profile/image/" + sender_id);
+        IconCompat userIcon = getIconFromURL("https://cdn.youngapply.com/asset/" + asset_id);
         
         Person.Builder personBuilder = new Person.Builder().setName(sender);
 
-        if (userIcon != null){
+        if (userIcon != null || asset_id != ""){
             personBuilder.setIcon(userIcon);
         }
 
